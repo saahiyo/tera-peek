@@ -106,7 +106,15 @@ export default function TeraPeek() {
             </p>
           </div>
 
-          <div className="relative">
+          {/* Desktop menu */}
+          <nav className="hidden md:flex gap-6 text-sm font-medium">
+            <a href="#how" className="hover:text-indigo-600 transition">How it works</a>
+            <a href="#" className="hover:text-indigo-600 transition">About</a>
+            <a href="#" className="hover:text-indigo-600 transition">Repo</a>
+          </nav>
+
+          {/* Mobile menu */}
+          <div className="relative md:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
@@ -114,13 +122,21 @@ export default function TeraPeek() {
             >
               <Menu size={22} />
             </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20">
-                <a href="#how" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">How it works</a>
-                <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">About</a>
-                <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">Repo</a>
-              </div>
-            )}
+            <AnimatePresence>
+              {menuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20"
+                >
+                  <a href="#how" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">How it works</a>
+                  <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">About</a>
+                  <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">Repo</a>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </header>
 
