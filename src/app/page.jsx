@@ -1,0 +1,256 @@
+"use client";
+
+import React, { useState } from "react";
+import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function TeraPeek() {
+  const [videoId, setVideoId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [data, setData] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const extractId = (input) => {
+    if (!input) return "";
+    try {
+      const trimmed = input.trim();
+      const urlMatch = trimmed.match(
+        /(?:https?:\/\/(?:www\.)?(?:terabox|terasharelink|terashare|1024tera|teraboxcdn)(?:\.(?:com|net|org|app|cn)))\/s\/([^/?#]+)/i
+      );
+      if (urlMatch && urlMatch[1]) return urlMatch[1];
+      const genericMatch = trimmed.match(/\/s\/([^/?#]+)/i);
+      if (genericMatch && genericMatch[1]) return genericMatch[1];
+      return trimmed.replace(/\/+$/, "");
+    } catch (e) {
+      console.error("extractId error:", e);
+      return input.trim();
+    }
+  };
+
+  const fetchMeta = async () => {
+    setError("");
+    setData(null);
+
+    const trimmed = videoId.trim();
+    if (!trimmed) {
+      setError("❌ Please enter a video ID or share link.");
+      return;
+    }
+
+    const id = extractId(trimmed);
+    if (!id) {
+      setError("⚠️ Could not extract a valid ID from the input.");
+      return;
+    }
+    if (id && id !== trimmed) setVideoId(id);
+
+    const apiUrl = `https://teraboxdownloderapi.revangeapi.workers.dev/?url=https://terabox.com/s/${encodeURIComponent(
+      id
+    )}`;
+
+    try {
+      setLoading(true);
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
+      const json = await res.json();
+
+      if (!json || typeof json !== "object") throw new Error("Malformed API response.");
+      if (!json.directlink) throw new Error("No direct link found in response.");
+
+      setData(json);
+    } catch (err) {
+      console.error("fetchMeta error:", err);
+      if (err.message && err.message.includes("NetworkError")) {
+        setError("⚠️ Network error — check your connection or try again later.");
+      } else if (err.message && err.message.includes("Failed to fetch")) {
+        setError("⚠️ Request blocked — CORS or network issue. Consider using a server proxy.");
+      } else {
+        setError(err.message || "❌ Failed to fetch metadata. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setError("✅ Copied to clipboard");
+      setTimeout(() => setError(""), 1500);
+    } catch (e) {
+      console.error("Clipboard error:", e);
+      setError("⚠️ Copy failed — your browser may block clipboard access.");
+    }
+  };
+
+  const humanFileSize = (bytes) => {
+    if (bytes === undefined || bytes === null) return "-";
+    if (bytes === 0) return "0 B";
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    return (bytes / Math.pow(1024, i)).toFixed(i ? 2 : 0) + " " + sizes[i];
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12">
+      <div className="max-w-3xl mx-auto w-full">
+        {/* Header */}
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <div className="flex-1">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400">
+              TeraPeek
+            </h1>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 max-w-lg">
+              Inspect Terabox/Terashare videos — paste a link or ID to preview, fetch metadata, and download.
+            </p>
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
+              aria-label="Toggle menu"
+            >
+              <Menu size={22} />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20">
+                <a href="#how" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">How it works</a>
+                <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">About</a>
+                <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">Repo</a>
+              </div>
+            )}
+          </div>
+        </header>
+
+        <main className="flex flex-col gap-6 md:gap-8">
+          {/* Input card */}
+          <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
+            <label className="text-sm font-medium">Terabox video id or link</label>
+            <div className="mt-3 flex flex-col sm:flex-row gap-3 w-full">
+              <input
+                value={videoId}
+                onChange={(e) => setVideoId(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') fetchMeta(); }}
+                placeholder="Paste full link or just the id"
+                className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 px-3 sm:px-4 py-3 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+              />
+              <button
+                onClick={fetchMeta}
+                disabled={loading}
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition disabled:opacity-50 w-full sm:w-auto"
+                aria-label="Fetch metadata"
+              >
+                {loading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />} {" "}
+                <span>{loading ? "Checking..." : "Inspect"}</span>
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="mt-4 text-sm flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 w-full"
+                >
+                  <AlertTriangle size={16} /> {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses a public worker API, so availability may vary.</p>
+          </motion.section>
+
+          {/* Result panel (stacked column) */}
+          <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
+            {!data ? (
+              <div className="flex flex-col items-center justify-center p-6 sm:p-12 text-center border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl min-h-[220px] sm:min-h-[300px]">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <h2 className="text-lg sm:text-xl font-semibold">No video loaded yet</h2>
+                  <p className="mt-2 text-neutral-500">Enter a link or ID and press <span className="font-medium">Inspect</span> to view metadata and preview the video.</p>
+                </motion.div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Thumbnail */}
+                <div className="rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-sm w-full">
+                  {data.thumb ? (
+                    <img src={data.thumb} alt={data.file_name} className="w-full h-auto object-cover" />
+                  ) : (
+                    <div className="w-full h-48 flex items-center justify-center text-neutral-500">No thumbnail</div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={data.directlink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition w-full sm:w-auto"
+                  >
+                    <Link2 size={16} /> Open Link
+                  </a>
+                  <a
+                    href={data.directlink}
+                    download
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-600 hover:bg-green-700 transition text-white w-full sm:w-auto"
+                  >
+                    <DownloadCloud size={16} /> Download
+                  </a>
+                </div>
+
+                {/* Video preview */}
+                <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 bg-black shadow-sm w-full">
+                  <video src={data.directlink} controls className="w-full h-52 sm:h-64 md:h-80 lg:h-96" poster={data.thumb || ""}>
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+
+                {/* Metadata */}
+                <div className="p-4 sm:p-5 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm w-full overflow-x-auto">
+                  <h3 className="text-lg font-semibold">Metadata</h3>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm break-words">
+                      <span className="text-neutral-400">File name</span>
+                      <div className="mt-1 font-medium">{data.file_name}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                      <span className="text-neutral-400">Size</span>
+                      <div className="mt-1 font-medium">{data.size || humanFileSize(data.sizebytes)}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                      <span className="text-neutral-400">Size (bytes)</span>
+                      <div className="mt-1 font-medium">{data.sizebytes ?? "-"}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm break-words col-span-1 sm:col-span-2">
+                      <span className="text-neutral-400">Thumbnail</span>
+                      <div className="mt-1 font-medium">{data.thumb ?? "-"}</div>
+                    </div>
+                  </div>
+
+                  <details className="mt-4 text-sm">
+                    <summary className="cursor-pointer">Raw JSON response</summary>
+                    <pre className="mt-3 rounded p-3 bg-white dark:bg-neutral-800 text-xs overflow-auto max-w-full">{JSON.stringify(data, null, 2)}</pre>
+                  </details>
+                </div>
+              </div>
+            )}
+          </motion.section>
+        </main>
+
+        <footer id="how" className="mt-8 text-sm text-neutral-500 leading-relaxed w-full">
+          <h4 className="font-semibold">How to get the id</h4>
+          <ol className="mt-2 list-decimal pl-5 space-y-1">
+            <li>Paste the full Terabox/Terashare share link or just the id.</li>
+            <li>The app automatically extracts the id segment after <code className="rounded bg-neutral-100 px-1">/s/</code>.</li>
+            <li>Click <strong>Inspect</strong> to fetch metadata.</li>
+          </ol>
+          <p className="mt-3">⚠️ This app uses a public worker proxy — avoid pasting sensitive links. For production, host your own proxy with server-side protection.</p>
+        </footer>
+      </div>
+    </div>
+  );
+}
