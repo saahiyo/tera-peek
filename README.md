@@ -1,9 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TeraPeek
 
-## Getting Started
+A modern web application for inspecting, previewing, and downloading Terabox/Terashare videos. Extract metadata, view thumbnails, and get direct download links with a clean, responsive interface.
 
-First, run the development server:
+![TeraPeek](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-orange)
 
+## ✨ Features
+
+- **🔍 Smart ID Extraction**: Automatically extracts video IDs from Terabox/Terashare links
+- **📊 Metadata Display**: Shows file name, size, thumbnail, and complete JSON response
+- **🎬 Video Preview**: Built-in video player with thumbnail support
+- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **🌙 Dark Mode**: Automatic dark/light theme support
+- **⚡ Fast & Lightweight**: Built with Next.js 15 and React 19
+- **🎨 Modern UI**: Smooth animations with Framer Motion
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18.0 or later
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/tera-peek.git
+cd tera-peek
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+3. Run the development server:
 ```bash
 npm run dev
 # or
@@ -14,23 +51,117 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📖 Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Enter Video ID or Link**: Paste a full Terabox/Terashare share link or just the video ID
+2. **Click Inspect**: The app will automatically extract the ID and fetch metadata
+3. **View Results**: See thumbnail, metadata, and preview the video
+4. **Download**: Use the download button to save the video directly
 
-## Learn More
+### Supported URL Formats
 
-To learn more about Next.js, take a look at the following resources:
+- `https://terabox.com/s/VIDEO_ID`
+- `https://terasharelink.com/s/VIDEO_ID`
+- `https://teraboxcdn.com/s/VIDEO_ID`
+- `https://1024tera.com/s/VIDEO_ID`
+- And other Terabox/Terashare domains
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework**: [Next.js 15](https://nextjs.org/) - The React Framework for Production
+- **Language**: [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
+- **UI Library**: [React 19](https://reactjs.org/) - A JavaScript library for building user interfaces
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) - Production-ready motion library
+- **Icons**: [Lucide React](https://lucide.dev/) - Beautiful & consistent icons
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- **Font**: [Geist](https://vercel.com/font) - Vercel's font family
 
-## Deploy on Vercel
+## 📁 Project Structure
+
+```
+tera-peek/
+├── src/
+│   └── app/
+│       ├── globals.css          # Global styles
+│       ├── layout.js            # Root layout component
+│       └── page.jsx             # Main application component
+├── public/                      # Static assets
+├── next.config.mjs             # Next.js configuration
+├── package.json                 # Project dependencies and scripts
+├── tailwind.config.js           # Tailwind CSS configuration
+├── tsconfig.json               # TypeScript configuration
+└── README.md                   # This file
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+This project uses a public worker API. For production use, consider setting up your own proxy:
+
+```bash
+# Create a .env.local file
+NEXT_PUBLIC_API_URL=https://your-api-worker.workers.dev
+```
+
+### Customization
+
+- **API Endpoint**: Modify the `apiUrl` in [`src/app/page.jsx:48`](src/app/page.jsx:48) to use your own proxy
+- **Styling**: Customize colors and themes in [`src/app/globals.css`](src/app/globals.css)
+- **Branding**: Update the app name and logo in [`src/app/page.jsx`](src/app/page.jsx)
+
+## 🚀 Deployment
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Other Deployment Options
+
+- **Netlify**: Works with Next.js static export
+- **Railway**: Deploy with one click
+- **DigitalOcean**: Use App Platform
+- **AWS**: Use Amplify or S3 + CloudFront
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+- This tool uses a public worker API for demonstration purposes
+- Avoid pasting sensitive or private Terabox links
+- For production use, set up your own proxy with proper authentication and rate limiting
+- The availability and reliability of the public API may vary
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) for the amazing framework
+- [Vercel](https://vercel.com/) for hosting and font support
+- [Framer Motion](https://www.framer.com/motion/) for smooth animations
+- [Lucide](https://lucide.dev/) for beautiful icons
+
+---
+
+Made with ❤️ using Next.js and React
