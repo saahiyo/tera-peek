@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu } from "lucide-react";
+import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeraPeek() {
@@ -94,10 +94,10 @@ export default function TeraPeek() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12">
-      <div className="max-w-3xl mx-auto w-full">
+      <div className="max-w-4xl mx-auto w-full">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-          <div className="flex-1">
+        <header className="flex flex-wrap items-center justify-between mb-8 gap-4">
+          <div className="flex-1 min-w-[200px]">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400">
               TeraPeek
             </h1>
@@ -106,11 +106,14 @@ export default function TeraPeek() {
             </p>
           </div>
 
-          {/* Desktop menu */}
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <a href="#how" className="hover:text-indigo-600 transition">How it works</a>
-            <a href="#" className="hover:text-indigo-600 transition">About</a>
-            <a href="#" className="hover:text-indigo-600 transition">Repo</a>
+          {/* Desktop menu with pill buttons */}
+          <nav className="hidden md:flex gap-3 shrink-0">
+            <a href="#how" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
+              <HelpCircle size={16}/> Help
+            </a>
+            <a href="#" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
+              <Github size={16}/> Repo
+            </a>
           </nav>
 
           {/* Mobile menu */}
@@ -131,9 +134,8 @@ export default function TeraPeek() {
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20"
                 >
-                  <a href="#how" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">How it works</a>
-                  <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">About</a>
-                  <a href="#" className="block px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">Repo</a>
+                  <a href="#how" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><HelpCircle size={16}/> Help</a>
+                  <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><Github size={16}/> Repo</a>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -179,7 +181,7 @@ export default function TeraPeek() {
             <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses a public worker API, so availability may vary.</p>
           </motion.section>
 
-          {/* Result panel (stacked column) */}
+          {/* Result panel */}
           <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
             {!data ? (
               <div className="flex flex-col items-center justify-center p-6 sm:p-12 text-center border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl min-h-[220px] sm:min-h-[300px]">
