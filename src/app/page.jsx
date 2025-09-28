@@ -96,7 +96,7 @@ export default function TeraPeek() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12">
       <div className="max-w-4xl mx-auto w-full">
         {/* Header */}
-        <header className="flex flex-wrap items-center justify-between mb-8 gap-4">
+        <header className="flex flex-wrap items-start justify-between mb-8 gap-4">
           <div className="flex-1 min-w-[200px]">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400">
               TeraPeek
@@ -107,11 +107,11 @@ export default function TeraPeek() {
           </div>
 
           {/* Desktop menu with pill buttons */}
-          <nav className="hidden md:flex gap-3 shrink-0">
+          <nav className="hidden md:flex gap-3 shrink-0 items-start">
             <a href="#how" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
               <HelpCircle size={16}/> Help
             </a>
-            <a href="#" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
+            <a href="https://github.com/saahiyo/tera-peek" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
               <Github size={16}/> Repo
             </a>
           </nav>
@@ -135,7 +135,7 @@ export default function TeraPeek() {
                   className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20"
                 >
                   <a href="#how" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><HelpCircle size={16}/> Help</a>
-                  <a href="#" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><Github size={16}/> Repo</a>
+                  <a href="https://github.com/saahiyo/tera-peek" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><Github size={16}/> Repo</a>
                 </motion.div>
               )}
             </AnimatePresence>
