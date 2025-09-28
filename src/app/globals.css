@@ -12,11 +12,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Use class-based dark mode instead of media queries to avoid hydration mismatches */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {
