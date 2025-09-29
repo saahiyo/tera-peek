@@ -175,31 +175,47 @@ export default function TeraPeek() {
           <div className="relative md:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
+              className="relative z-50 p-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800"
               aria-label="Toggle menu"
             >
               <Menu size={22} />
             </button>
             <AnimatePresence>
               {menuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-20"
-                >
-                  <button
-                    onClick={toggleTheme}
-                    className="flex items-center gap-2 px-4 py-2 w-full hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"
-                    aria-label="Toggle theme"
+                <>
+                  {/*menu dark overlay */}
+                  <motion.div
+                    className="fixed inset-0 bg-black/40 z-40"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  {/*menu content */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-50"
                   >
-                    {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-                    {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                  </button>
-                  <a href="#how" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><HelpCircle size={16}/> Help</a>
-                  <a href="https://github.com/saahiyo/tera-peek" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"><Github size={16}/> Repo</a>
-                </motion.div>
+                    <button
+                      onClick={toggleTheme}
+                      className="flex items-center gap-2 px-4 py-2 w-full hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"
+                      aria-label="Toggle theme"
+                    >
+                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+                      {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                    </button>
+                    <a href="#how" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">
+                      <HelpCircle size={16} /> Help
+                    </a>
+                    <a href="https://github.com/saahiyo/tera-peek" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">
+                      <Github size={16} /> Repo
+                    </a>
+                  </motion.div>
+                </>
               )}
             </AnimatePresence>
           </div>
