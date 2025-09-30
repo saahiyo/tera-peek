@@ -37,14 +37,14 @@ export const metadata = {
     locale: "en_US",
     url: "https://tera-peek.vercel.app",
     siteName: "TeraPeek",
-    images: ["/og.png"],
+    images: ["/api/og"],
   },
   twitter: {
     card: "summary_large_image",
     title: "TeraPeek - Inspect Terabox/Terashare Videos",
     description:
       "Inspect, preview, and download Terabox and Terashare videos with metadata extraction.",
-    images: ["/og.png"],
+    images: ["/api/og"],
   },
   icons: {
     icon: "/favicon.ico",
