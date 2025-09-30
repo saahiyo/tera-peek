@@ -10,13 +10,11 @@ export default function TeraPeek() {
   const [error, setError] = useState("");
   const [data, setData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [themeInitialized, setThemeInitialized] = useState(false);
 
-  // Ensure component only renders on client side
+  // Initialize theme on client side only
   useEffect(() => {
-    setIsClient(true);
-    
     // Check for saved theme preference or default to light mode
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -26,11 +24,12 @@ export default function TeraPeek() {
     if (shouldUseDarkMode) {
       document.documentElement.classList.add('dark');
     }
+    setThemeInitialized(true);
   }, []);
 
   // Update theme when isDarkMode changes
   useEffect(() => {
-    if (isClient) {
+    if (themeInitialized) {
       if (isDarkMode) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('theme', 'dark');
@@ -39,7 +38,7 @@ export default function TeraPeek() {
         localStorage.setItem('theme', 'light');
       }
     }
-  }, [isDarkMode, isClient]);
+  }, [isDarkMode, themeInitialized]);
 
   // Toggle theme
   const toggleTheme = () => {
@@ -127,8 +126,9 @@ export default function TeraPeek() {
     return (bytes / Math.pow(1024, i)).toFixed(i ? 2 : 0) + " " + sizes[i];
   };
 
-  // Don't render on server side to avoid hydration mismatches
-  if (!isClient) {
+
+  // Don't render theme toggle buttons until theme is initialized
+  if (!themeInitialized) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 md:p-12 flex items-center justify-center">
         <div className="text-center">
@@ -272,11 +272,17 @@ export default function TeraPeek() {
             ) : (
               <div className="space-y-6">
                 {/* Thumbnail */}
-                <div className="rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-sm w-full">
+                <div className="rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-sm w-full aspect-video max-h-[320px]">
                   {data.thumb ? (
-                    <img src={data.thumb} alt={data.file_name} className="w-full h-auto object-cover" />
+                    <img
+                      src={data.thumb}
+                      alt={data.file_name}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   ) : (
-                    <div className="w-full h-48 flex items-center justify-center text-neutral-500">No thumbnail</div>
+                    <div className="w-full h-full flex items-center justify-center text-neutral-500">No thumbnail</div>
                   )}
                 </div>
 
@@ -299,12 +305,6 @@ export default function TeraPeek() {
                   </a>
                 </div>
 
-                {/* Video preview */}
-                <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-700 bg-black shadow-sm w-full">
-                  <video src={data.directlink} controls className="w-full h-52 sm:h-64 md:h-80 lg:h-96" poster={data.thumb || ""}>
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
 
                 {/* Metadata */}
                 <div className="p-4 sm:p-5 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm w-full overflow-x-auto">
