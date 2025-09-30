@@ -14,25 +14,37 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "TeraPeek - Inspect Terabox/Terashare Videos",
-  description: "Inspect, preview, and download Terabox and Terashare videos. Extract metadata, view thumbnails, and get direct download links from share links.",
-  keywords: ["terabox", "terashare", "video inspector", "metadata extractor", "download", "preview", "video analysis"],
-  authors: [{ name: "TeraPeek" }],
-  creator: "TeraPeek",
-  publisher: "TeraPeek",
+  description:
+    "Inspect, preview, and download Terabox and Terashare videos. Extract metadata, view thumbnails, and get direct download links from share links.",
+  keywords: [
+    "terabox",
+    "terashare",
+    "video inspector",
+    "metadata extractor",
+    "download",
+    "preview",
+    "video analysis",
+  ],
+  authors: [{ name: "saahiyo" }],
+  creator: "saahiyo",
+  publisher: "saahiyo",
   robots: "index, follow",
   openGraph: {
     title: "TeraPeek - Inspect Terabox/Terashare Videos",
-    description: "Inspect, preview, and download Terabox and Terashare videos with metadata extraction and direct download links.",
+    description:
+      "Inspect, preview, and download Terabox and Terashare videos with metadata extraction and direct download links.",
     type: "website",
     locale: "en_US",
     url: "https://tera-peek.vercel.app",
     siteName: "TeraPeek",
+    images: ["/og.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "TeraPeek - Inspect Terabox/Terashare Videos",
-    description: "Inspect, preview, and download Terabox and Terashare videos with metadata extraction.",
-    images: ["/og-image.png"],
+    description:
+      "Inspect, preview, and download Terabox and Terashare videos with metadata extraction.",
+    images: ["/og.png"],
   },
   icons: {
     icon: "/favicon.ico",
@@ -40,6 +52,7 @@ export const metadata = {
   },
   manifest: "/manifest.json",
 };
+
 
 export default function RootLayout({ children }) {
   return (
