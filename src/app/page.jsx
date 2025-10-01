@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github, Sun, Moon } from "lucide-react";
+import React, { useState } from "react";
+import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeraPeek() {
@@ -10,40 +10,7 @@ export default function TeraPeek() {
   const [error, setError] = useState("");
   const [data, setData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [themeInitialized, setThemeInitialized] = useState(false);
 
-  // Initialize theme on client side only
-  useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldUseDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
-    
-    setIsDarkMode(shouldUseDarkMode);
-    if (shouldUseDarkMode) {
-      document.documentElement.classList.add('dark');
-    }
-    setThemeInitialized(true);
-  }, []);
-
-  // Update theme when isDarkMode changes
-  useEffect(() => {
-    if (themeInitialized) {
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      }
-    }
-  }, [isDarkMode, themeInitialized]);
-
-  // Toggle theme
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const extractId = (input) => {
     if (!input) return "";
@@ -127,23 +94,11 @@ export default function TeraPeek() {
   };
 
 
-  // Don't render theme toggle buttons until theme is initialized
-  if (!themeInitialized) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 p-4 sm:p-6 md:p-12 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-950 p-4 sm:p-6 md:p-12">
       <div className="max-w-4xl mx-auto w-full">
         {/* Header */}
-        <header className="flex flex-wrap items-start justify-between mb-8 gap-4">
+        <header className="flex flex-wrap items-start justify-between mb-8 gap-4 cursor-pointer">
           <div className="flex-1 min-w-[200px]">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400">
               TeraPeek
@@ -155,14 +110,6 @@ export default function TeraPeek() {
 
           {/* Desktop menu with pill buttons */}
           <nav className="hidden md:flex gap-3 shrink-0 items-start">
-            <button
-              onClick={toggleTheme}
-              className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm"
-              aria-label="Toggle theme"
-            >
-              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-              {isDarkMode ? 'Light' : 'Dark'}
-            </button>
             <a href="#how" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
               <HelpCircle size={16}/> Help
             </a>
@@ -200,14 +147,6 @@ export default function TeraPeek() {
                     transition={{ duration: 0.2 }}
                     className="absolute right-0 mt-2 w-44 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-50"
                   >
-                    <button
-                      onClick={toggleTheme}
-                      className="flex items-center gap-2 px-4 py-2 w-full hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm"
-                      aria-label="Toggle theme"
-                    >
-                      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-                      {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                    </button>
                     <a href="#how" className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-sm">
                       <HelpCircle size={16} /> Help
                     </a>
