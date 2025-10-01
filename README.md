@@ -4,6 +4,8 @@ A modern web application for inspecting, previewing, and downloading Terabox/Ter
 
 ![TeraPeek](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-orange)
 
+<img width="1200" height="675" alt="tera-peek og-img" src="https://github.com/user-attachments/assets/d12cac3a-d8b3-4751-b583-957f650f91ba" />
+
 ## ✨ Features
 
 - **🔍 Smart ID Extraction**: Automatically extracts video IDs from Terabox/Terashare links
