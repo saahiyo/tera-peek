@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeraPeek() {
@@ -10,6 +10,7 @@ export default function TeraPeek() {
   const [error, setError] = useState("");
   const [data, setData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const inputRef = useRef(null);
 
 
   const extractId = (input) => {
@@ -94,6 +95,21 @@ export default function TeraPeek() {
   };
 
 
+  // Auto-focus input on page load
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const clearInput = () => {
+    setVideoId("");
+    setError("");
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-950 p-4 sm:p-6 md:p-12">
       <div className="max-w-4xl mx-auto w-full">
@@ -165,21 +181,33 @@ export default function TeraPeek() {
           <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
             <label className="text-sm font-medium">Terabox video id or link</label>
             <div className="mt-3 flex flex-col sm:flex-row gap-3 w-full">
-              <input
-                value={videoId}
-                onChange={(e) => setVideoId(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') fetchMeta(); }}
-                placeholder="Paste full link or just the id"
-                className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 px-3 sm:px-4 py-3 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              />
+              <div className="relative flex-1">
+                <input
+                  ref={inputRef}
+                  value={videoId}
+                  onChange={(e) => setVideoId(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') fetchMeta(); }}
+                  placeholder="Paste full link or just the id"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 px-3 sm:px-4 py-3 pr-10 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                {videoId && (
+                  <button
+                    onClick={clearInput}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 hover:shadow-sm"
+                    aria-label="Clear input"
+                  >
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
               <button
                 onClick={fetchMeta}
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition disabled:opacity-50 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 w-full sm:w-auto"
                 aria-label="Fetch metadata"
               >
-                {loading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />} {" "}
-                <span>{loading ? "Checking..." : "Inspect"}</span>
+                {loading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} className="text-indigo-200" />} {" "}
+                <span className="font-medium">{loading ? "Checking..." : "Inspect"}</span>
               </button>
             </div>
 
