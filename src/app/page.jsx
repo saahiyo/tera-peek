@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github, X } from "lucide-react";
+import { Copy, Link2, DownloadCloud, Search, Loader2, AlertTriangle, Menu, HelpCircle, Github, X, ChevronDown, Twitter, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeraPeek() {
@@ -10,7 +10,14 @@ export default function TeraPeek() {
   const [error, setError] = useState("");
   const [data, setData] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [helpDropdownOpen, setHelpDropdownOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const inputRef = useRef(null);
+
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
 
   const extractId = (input) => {
@@ -111,7 +118,12 @@ export default function TeraPeek() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-950 p-4 sm:p-6 md:p-12">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-950 p-4 sm:p-6 md:p-12"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
       <div className="max-w-4xl mx-auto w-full">
         {/* Header */}
         <header className="flex flex-wrap items-start justify-between mb-8 gap-4 cursor-pointer">
@@ -126,9 +138,63 @@ export default function TeraPeek() {
 
           {/* Desktop menu with pill buttons */}
           <nav className="hidden md:flex gap-3 shrink-0 items-start">
-            <a href="#how" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
-              <HelpCircle size={16}/> Help
-            </a>
+            <div className="relative">
+              <button
+                onClick={() => setHelpDropdownOpen(!helpDropdownOpen)}
+                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm"
+              >
+                <HelpCircle size={16}/> Help
+                <ChevronDown size={14} className={helpDropdownOpen ? "rotate-180" : ""} />
+              </button>
+              <AnimatePresence>
+                {helpDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-80 bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700 z-50"
+                  >
+                    <div className="p-4">
+                      <h3 className="font-semibold text-sm mb-3">Quick Tips</h3>
+                      <ul className="space-y-2 text-xs text-neutral-600 dark:text-neutral-300">
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-600">•</span>
+                          <span>Paste any Terabox/Terashare share link - the app will auto-extract the ID</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-600">•</span>
+                          <span>Works with terabox.com, terasharelink.com, and similar domains</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-600">•</span>
+                          <span>Click "Inspect" to fetch metadata and preview the video</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-600">•</span>
+                          <span>Use "Open Link" to view in browser or "Download" to save</span>
+                        </li>
+                      </ul>
+                      <h3 className="font-semibold text-sm mt-4 mb-3">FAQ</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">Q: Is this tool free?</p>
+                          <p className="text-xs text-neutral-600 dark:text-neutral-300 mt-1">A: Yes, it's completely free to use.</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">Q: Do I need to create an account?</p>
+                          <p className="text-xs text-neutral-600 dark:text-neutral-300 mt-1">A: No, just paste the link and start using it immediately.</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">Q: Are downloads unlimited?</p>
+                          <p className="text-xs text-neutral-600 dark:text-neutral-300 mt-1">A: Yes, there are no usage restrictions.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <a href="https://github.com/saahiyo/tera-peek" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm">
               <Github size={16}/> Repo
             </a>
@@ -178,7 +244,13 @@ export default function TeraPeek() {
 
         <main className="flex flex-col gap-6 md:gap-8">
           {/* Input card */}
-          <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
+          <motion.section
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full"
+          >
             <label className="text-sm font-medium">Terabox video id or link</label>
             <div className="mt-3 flex flex-col sm:flex-row gap-3 w-full">
               <div className="relative flex-1">
@@ -228,10 +300,20 @@ export default function TeraPeek() {
           </motion.section>
 
           {/* Result panel */}
-          <motion.section layout className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full">
+          <motion.section
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-white dark:bg-neutral-800 rounded-2xl p-4 sm:p-6 shadow-md w-full"
+          >
             {!data ? (
               <div className="flex flex-col items-center justify-center p-6 sm:p-12 text-center border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl min-h-[220px] sm:min-h-[300px]">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
                   <h2 className="text-lg sm:text-xl font-semibold">No video loaded yet</h2>
                   <p className="mt-2 text-neutral-500">Enter a link or ID and press <span className="font-medium">Inspect</span> to view metadata and preview the video.</p>
                 </motion.div>
@@ -306,15 +388,22 @@ export default function TeraPeek() {
         </main>
 
         <footer id="how" className="mt-8 text-sm text-neutral-500 leading-relaxed w-full">
-          <h4 className="font-semibold">How to get the id</h4>
-          <ol className="mt-2 list-decimal pl-5 space-y-1">
-            <li>Paste the full Terabox/Terashare share link or just the id.</li>
-            <li>The app automatically extracts the id segment after <code className="rounded bg-neutral-100 px-1">/s/</code>.</li>
-            <li>Click <strong>Inspect</strong> to fetch metadata.</li>
-          </ol>
-          <p className="mt-3">⚠️ This app uses a public worker proxy — avoid pasting sensitive links. For production, host your own proxy with server-side protection.</p>
+          {/* How to get the id */}
+          <div className="mb-6">
+            <h4 className="font-semibold">How to get the id</h4>
+            <ol className="mt-2 list-decimal pl-5 space-y-1">
+              <li>Paste the full Terabox/Terashare share link or just the id.</li>
+              <li>The app automatically extracts the id segment after <code className="rounded bg-neutral-100 px-1">/s/</code>.</li>
+              <li>Click <strong>Inspect</strong> to fetch metadata.</li>
+            </ol>
+            <p className="mt-3">⚠️ This app uses a public worker proxy — avoid pasting sensitive links. For production, host your own proxy with server-side protection.</p>
+          </div>
+  
+          <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 text-center text-xs">
+            <p>© 2025 TeraPeek. Made with ❤️ by <a href="https://github.com/saahiyo" target="_blank" rel="noopener noreferrer"><span className="text-indigo-600 hover:underline font-bold">saahiyo</span></a></p>
+          </div>
         </footer>
       </div>
-    </div>
+    </motion.div>
   );
 }

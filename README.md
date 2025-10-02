@@ -27,7 +27,7 @@ A modern web application for inspecting, previewing, and downloading Terabox/Ter
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/tera-peek.git
+git clone https://github.com/saahiyo/tera-peek.git
 cd tera-peek
 ```
 
