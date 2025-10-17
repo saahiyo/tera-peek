@@ -54,7 +54,7 @@ export default function TeraPeek() {
     }
     if (id && id !== trimmed) setVideoId(id);
 
-    const apiUrl = `https://teraboxdownloderapi.revangeapi.workers.dev/?url=https://terabox.com/s/${encodeURIComponent(
+    const apiUrl = `https://tera-core.vercel.app/api?url=https://terabox.com/s/${encodeURIComponent(
       id
     )}`;
 
@@ -65,9 +65,26 @@ export default function TeraPeek() {
       const json = await res.json();
 
       if (!json || typeof json !== "object") throw new Error("Malformed API response.");
-      if (!json.directlink) throw new Error("No direct link found in response.");
+      if (json.status !== "success") throw new Error(json.message || "API request failed.");
+      if (!json.files || !json.files.length) throw new Error("No files found in response.");
 
-      setData(json);
+      // Transform the new API response to match the expected format
+      const fileData = json.files[0];
+      // Use the highest quality thumbnail (850x580) if available
+      const highestQualityThumb = fileData.thumbnails ? fileData.thumbnails['850x580'] || Object.values(fileData.thumbnails)[0] : null;
+      const transformedData = {
+        file_name: fileData.filename,
+        size: fileData.size,
+        sizebytes: parseInt(fileData.size_bytes) || 0,
+        thumb: highestQualityThumb,
+        directlink: fileData.download_link,
+        fs_id: fileData.fs_id,
+        is_directory: fileData.is_directory,
+        path: fileData.path,
+        original_response: json
+      };
+
+      setData(transformedData);
     } catch (err) {
       console.error("fetchMeta error:", err);
       if (err.message && err.message.includes("NetworkError")) {
@@ -164,7 +181,7 @@ export default function TeraPeek() {
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-indigo-600">•</span>
-                          <span>Works with terabox.com, terasharelink.com, and similar domains</span>
+                          <span>Works with terabox.com, terasharelink.com, 1024terabox.com, and similar domains</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-indigo-600">•</span>
@@ -173,6 +190,10 @@ export default function TeraPeek() {
                         <li className="flex items-start gap-2">
                           <span className="text-indigo-600">•</span>
                           <span>Use "Open Link" to view in browser or "Download" to save</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-indigo-600">•</span>
+                          <span>Supports multiple thumbnail sizes and detailed file information</span>
                         </li>
                       </ul>
                       <h3 className="font-semibold text-sm mt-4 mb-3">FAQ</h3>
@@ -296,7 +317,7 @@ export default function TeraPeek() {
               )}
             </AnimatePresence>
 
-            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses a public worker API, so availability may vary.</p>
+            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses the enhanced tera-core API with detailed file information and multiple thumbnail sizes.</p>
           </motion.section>
 
           {/* Result panel */}
@@ -371,15 +392,35 @@ export default function TeraPeek() {
                       <span className="text-neutral-400">Size (bytes)</span>
                       <div className="mt-1 font-medium">{data.sizebytes ?? "-"}</div>
                     </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                      <span className="text-neutral-400">File ID</span>
+                      <div className="mt-1 font-medium">{data.fs_id ?? "-"}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                      <span className="text-neutral-400">Path</span>
+                      <div className="mt-1 font-medium break-words">{data.path ?? "-"}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                      <span className="text-neutral-400">Is Directory</span>
+                      <div className="mt-1 font-medium">{data.is_directory ? "Yes" : "No"}</div>
+                    </div>
                     <div className="p-3 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm break-words col-span-1 sm:col-span-2">
                       <span className="text-neutral-400">Thumbnail</span>
-                      <div className="mt-1 font-medium">{data.thumb ?? "-"}</div>
+                      <div className="mt-1">
+                        {data.thumb ? (
+                          <a href={data.thumb} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline break-all">
+                            {data.thumb}
+                          </a>
+                        ) : (
+                          <span className="text-neutral-500">-</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   <details className="mt-4 text-sm">
                     <summary className="cursor-pointer">Raw JSON response</summary>
-                    <pre className="mt-3 rounded p-3 bg-white dark:bg-neutral-800 text-xs overflow-auto max-w-full">{JSON.stringify(data, null, 2)}</pre>
+                    <pre className="mt-3 rounded p-3 bg-white dark:bg-neutral-800 text-xs overflow-auto max-w-full">{JSON.stringify(data.original_response || data, null, 2)}</pre>
                   </details>
                 </div>
               </div>
@@ -396,7 +437,19 @@ export default function TeraPeek() {
               <li>The app automatically extracts the id segment after <code className="rounded bg-neutral-100 px-1">/s/</code>.</li>
               <li>Click <strong>Inspect</strong> to fetch metadata.</li>
             </ol>
-            <p className="mt-3">⚠️ This app uses a public worker proxy — avoid pasting sensitive links. For production, host your own proxy with server-side protection.</p>
+            <p className="mt-3">⚠️ This app uses a public API endpoint — avoid pasting sensitive links. For production, consider hosting your own API with server-side protection.</p>
+          </div>
+
+          {/* Features */}
+          <div className="mb-6">
+            <h4 className="font-semibold">Features</h4>
+            <ul className="mt-2 list-disc pl-5 space-y-1">
+              <li>Extracts detailed file metadata including size, path, and file ID</li>
+              <li>Supports multiple thumbnail sizes (60x60, 140x90, 360x270, 850x580)</li>
+              <li>Provides direct download links with expiration handling</li>
+              <li>Shows comprehensive file information and original API response</li>
+              <li>Works with terabox.com, 1024terabox.com, and similar domains</li>
+            </ul>
           </div>
   
           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 text-center text-xs">
