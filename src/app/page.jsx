@@ -13,11 +13,31 @@ export default function TeraPeek() {
   const [helpDropdownOpen, setHelpDropdownOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const inputRef = useRef(null);
+  const helpDropdownRef = useRef(null);
 
   // Set isClient to true after component mounts
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Close help dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (helpDropdownRef.current && !helpDropdownRef.current.contains(event.target)) {
+        setHelpDropdownOpen(false);
+      }
+    };
+
+    if (helpDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [helpDropdownOpen]);
 
 
   const extractId = (input) => {
@@ -155,7 +175,7 @@ export default function TeraPeek() {
 
           {/* Desktop menu with pill buttons */}
           <nav className="hidden md:flex gap-3 shrink-0 items-start">
-            <div className="relative">
+            <div className="relative" ref={helpDropdownRef}>
               <button
                 onClick={() => setHelpDropdownOpen(!helpDropdownOpen)}
                 className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 transition text-sm"
