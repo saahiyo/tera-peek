@@ -382,18 +382,20 @@ export default function TeraPeek() {
                     href={data.directlink}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition w-full sm:w-auto"
+                    className="group inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border-2 border-indigo-500 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] w-full sm:w-auto"
                   >
-                    <Link2 size={16} /> Open Link
+                    <Link2 size={18} className="text-indigo-600 group-hover:text-indigo-700 dark:text-indigo-400 dark:group-hover:text-indigo-300" />
+                    <span className="font-medium text-indigo-700 group-hover:text-indigo-800 dark:text-indigo-300 dark:group-hover:text-indigo-200">Open Link</span>
                   </a>
                   <a
                     href={data.directlink}
                     target="_blank"
                     rel="noreferrer"
                     download={data.file_name}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-600 hover:bg-green-700 transition text-white w-full sm:w-auto"
+                    className="group inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] text-white w-full sm:w-auto shadow-md hover:shadow-lg"
                   >
-                    <DownloadCloud size={16} /> Download
+                    <DownloadCloud size={18} className="text-white" />
+                    <span className="font-medium">Download</span>
                   </a>
                 </div>
 
