@@ -388,7 +388,9 @@ export default function TeraPeek() {
                   </a>
                   <a
                     href={data.directlink}
-                    download
+                    target="_blank"
+                    rel="noreferrer"
+                    download={data.file_name}
                     className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-600 hover:bg-green-700 transition text-white w-full sm:w-auto"
                   >
                     <DownloadCloud size={16} /> Download
