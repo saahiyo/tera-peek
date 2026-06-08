@@ -19,7 +19,7 @@ export class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12 flex items-center justify-center">
+        <div suppressHydrationWarning className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 text-neutral-900 dark:text-neutral-100 p-4 sm:p-6 md:p-12 flex items-center justify-center">
           <div className="text-center max-w-md">
             <h2 className="text-xl font-semibold mb-4">Something went wrong</h2>
             <p className="text-neutral-600 dark:text-neutral-400 mb-4">

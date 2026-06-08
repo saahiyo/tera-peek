@@ -90,13 +90,23 @@ export default function TeraPeek() {
 
       // Transform the new API response to match the expected format
       const fileData = json.files[0];
-      // Use the highest quality thumbnail (850x580) if available
-      const highestQualityThumb = fileData.thumbnails ? fileData.thumbnails['850x580'] || Object.values(fileData.thumbnails)[0] : null;
+      // Get thumbnail URL - prefer 'original' key, fallback to first available
+      let thumbUrl = fileData.thumbnails
+        ? fileData.thumbnails.original || Object.values(fileData.thumbnails)[0]
+        : null;
+      // Strip size=icon param so the proxy serves highest quality (url3)
+      if (thumbUrl) {
+        try {
+          const u = new URL(thumbUrl);
+          u.searchParams.delete('size');
+          thumbUrl = u.toString();
+        } catch (_) { /* keep original URL if parsing fails */ }
+      }
       const transformedData = {
         file_name: fileData.filename,
         size: fileData.size,
         sizebytes: parseInt(fileData.size_bytes) || 0,
-        thumb: highestQualityThumb,
+        thumb: thumbUrl,
         directlink: fileData.download_link,
         fs_id: fileData.fs_id,
         is_directory: fileData.is_directory,
@@ -337,7 +347,7 @@ export default function TeraPeek() {
               )}
             </AnimatePresence>
 
-            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses the enhanced tera-core API with detailed file information and multiple thumbnail sizes.</p>
+            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses the enhanced tera-core API with detailed file information and high-quality thumbnails.</p>
           </motion.section>
 
           {/* Result panel */}
@@ -469,7 +479,7 @@ export default function TeraPeek() {
             <h4 className="font-semibold">Features</h4>
             <ul className="mt-2 list-disc pl-5 space-y-1">
               <li>Extracts detailed file metadata including size, path, and file ID</li>
-              <li>Supports multiple thumbnail sizes (60x60, 140x90, 360x270, 850x580)</li>
+              <li>Displays high-quality non-expiring thumbnails via proxy</li>
               <li>Provides direct download links with expiration handling</li>
               <li>Shows comprehensive file information and original API response</li>
               <li>Works with terabox.com, 1024terabox.com, and similar domains</li>
@@ -477,7 +487,7 @@ export default function TeraPeek() {
           </div>
   
           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 text-center text-xs">
-            <p>© 2025 TeraPeek. Made with ❤️ by <a href="https://github.com/saahiyo" target="_blank" rel="noopener noreferrer"><span className="text-indigo-600 hover:underline font-bold">saahiyo</span></a></p>
+            <p>© 2026 TeraPeek. Made with ❤️ by <a href="https://github.com/saahiyo" target="_blank" rel="noopener noreferrer"><span className="text-indigo-600 hover:underline font-bold">saahiyo</span></a></p>
           </div>
         </footer>
       </div>

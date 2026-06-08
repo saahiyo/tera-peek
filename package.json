@@ -8,9 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@next/third-parties": "^16.1.6",
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.544.0",
-    "next": "15.5.7",
+    "next": "^16.1.6",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
