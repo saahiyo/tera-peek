@@ -74,7 +74,12 @@ export default function TeraPeek() {
     }
     if (id && id !== trimmed) setVideoId(id);
 
-    const apiUrl = `https://terabridge.vercel.app/api/resolve?url=https://1024terabox.com/s/${encodeURIComponent(
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 
+      (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://127.0.0.1:5000"
+        : "https://terabridge.vercel.app");
+
+    const apiUrl = `${apiBase}/api/resolve?url=https://1024terabox.com/s/${encodeURIComponent(
       id
     )}&key=supercloudkey`;
 
