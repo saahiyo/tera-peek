@@ -74,9 +74,9 @@ export default function TeraPeek() {
     }
     if (id && id !== trimmed) setVideoId(id);
 
-    const apiUrl = `https://tera-core.vercel.app/api?url=https://terabox.com/s/${encodeURIComponent(
+    const apiUrl = `https://terabridge.vercel.app/api/resolve?url=https://1024terabox.com/s/${encodeURIComponent(
       id
-    )}`;
+    )}&key=supercloudkey`;
 
     try {
       setLoading(true);
@@ -90,11 +90,11 @@ export default function TeraPeek() {
 
       // Transform the new API response to match the expected format
       const fileData = json.files[0];
-      // Get thumbnail URL - prefer 'original' key, fallback to first available
+      // Get thumbnail URL - prefer 'url3', fallback to 'original', fallback to first available
       let thumbUrl = fileData.thumbnails
-        ? fileData.thumbnails.original || Object.values(fileData.thumbnails)[0]
+        ? fileData.thumbnails.url3 || fileData.thumbnails.original || Object.values(fileData.thumbnails)[0]
         : null;
-      // Strip size=icon param so the proxy serves highest quality (url3)
+      // Strip size=icon param so the proxy serves highest quality
       if (thumbUrl) {
         try {
           const u = new URL(thumbUrl);
@@ -104,10 +104,10 @@ export default function TeraPeek() {
       }
       const transformedData = {
         file_name: fileData.filename,
-        size: fileData.size,
+        size: fileData.size || (fileData.size_bytes ? humanFileSize(parseInt(fileData.size_bytes)) : "-"),
         sizebytes: parseInt(fileData.size_bytes) || 0,
         thumb: thumbUrl,
-        directlink: fileData.download_link,
+        directlink: fileData.dlink || fileData.download_link,
         fs_id: fileData.fs_id,
         is_directory: fileData.is_directory,
         path: fileData.path,
@@ -347,7 +347,7 @@ export default function TeraPeek() {
               )}
             </AnimatePresence>
 
-            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses the enhanced tera-core API with detailed file information and high-quality thumbnails.</p>
+            <p className="mt-4 text-xs text-neutral-500 leading-relaxed">Paste a full Terabox/Terashare share link or just the ID — the app will auto-extract it. This tool uses the enhanced TeraBridge API with detailed file information and high-quality thumbnails.</p>
           </motion.section>
 
           {/* Result panel */}
